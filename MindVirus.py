@@ -43,6 +43,7 @@ class MindVirus(CustomObject):
         self.obj[desc_id] = completion
         return animation
 
+
 class Cable(CustomObject):
     """A cable that connects two objects with a smooth spline curve guided by normal vectors."""
 
@@ -91,6 +92,7 @@ class MindVirusJourney(CustomObject):
         self.mind_virus = MindVirus(h=PI/2)
         self.mind_virus.thrust()
         self.path = Cable()
+        self.mind_virus.align_to_spline(spline=self.path.tracer)
         self.parts = [self.mind_virus, self.path]
 
     def specify_creation(self):
@@ -101,7 +103,9 @@ class MindVirusJourney(CustomObject):
         self.parameters += [self.journey_completion_parameter]
 
     def specify_relations(self):
-        self.journey_completion_relation = XRelation(part=self.path, whole=self, desc_ids=[self.path.end_growth_parameter.desc_id],
+        self.cable_completion_relation = XRelation(part=self.path, whole=self, desc_ids=[self.path.end_growth_parameter.desc_id],
+                                    parameters=[self.journey_completion_parameter], formula=f"{self.journey_completion_parameter.name}")
+        self.mind_virus_completion_relation = XRelation(part=self.mind_virus.align_to_spline_tag, whole=self, desc_ids=[self.mind_virus.align_to_spline_tag.desc_ids["position"]],
                                     parameters=[self.journey_completion_parameter], formula=f"{self.journey_completion_parameter.name}")
 
 
